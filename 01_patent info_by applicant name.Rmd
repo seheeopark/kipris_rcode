@@ -1,0 +1,173 @@
+---
+title: "How to Extract Korean Patents from KIPRIS: By the Applicant Name"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## What is KIPRIS? 
+
+[KIPRIS](http://eng.kipris.or.kr/enghome/main.jsp) is an acronym Korea Intellectual Property Rights Information. 
+It is a web-based portal for searching patents, utilities, designs, and trademarks in Korea. 
+Using keyword-based search formula, KIPRIS offers up-to-date patents and related information. 
+
+[KIPRIS Plus](http://plus.kipris.or.kr/) is a public API service. 
+They offer 46 numbers of OpenAPI as of December 2019. 
+KIPRIS Plus service is free of charge up to 1,000 cases per month. 
+Please be aware that most extracted information from KIPRIS Plus would be in Korean. 
+
+## Apply for a personal key to access the OpenAPI services 
+
+KIPRIS Plus requires users to apply for a personal key to access the database. 
+First, [join](http://plus.kipris.or.kr/eng/member/memberSelect.do?menuNo=300028) a membership as an individual (customer) or an organization (data publisher). 
+If you are an individual non-profit researcher, you may prefer to join as a customer. 
+
+After logging-in, browse their OpenAPI lists and click any service you want to access. 
+Here is the api service links to extract patents or utilities information:
+[Patent-Utility Model Publications](http://plus.kipris.or.kr/eng/data/service/DBII_000000000000001/view.do?menuNo=300100&kppBCode=&kppMCode=&kppSCode=&subTab=SC001&entYn=&clasKeyword=)
+There are two blue square buttons: *Service* and *Service All*. 
+Click the **Service All** to get a personal key to access any API services from KIPRIS Plus. 
+Fill-up the provided form, and wait one or two days to get your access key. 
+Your personal key can be found in *My Page* under *Subscriptions*. 
+Do **NOT** share your access key with others. 
+
+Now you are ready to get patent data. 
+
+## Load packages 
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+library(httr) 
+library(xml2) 
+```
+
+## Prepare dataset 
+```{r}
+# URL for KIPRIS Plus REST
+url <- "http://plus.kipris.or.kr/kipo-api/kipi/patUtiModInfoSearchSevice/getAdvancedSearch"
+
+# Personal key to access the REST api 
+mykey <- "Use your access key"
+
+# Load your applicant data. 
+applicants <- readRDS("./sample_data/sample_applicant.rds") # Use this sample data if you want to experiment. 
+```
+
+Let look at the first 6 rows. 
+```{r} 
+head(applicants) # This sample is a tibble dataframe with 10 obs. 1 variable.  
+```
+
+## Patents according to your query.  
+```{r} 
+# Prepare an empty vector to record the presence of patents per applicant 
+no_patents <- vector(mode = "double")
+# Prepare an empty tibble dataframe to store extracted patent data 
+df_patent <- tibble() 
+
+# This code will extract patents according to the applicant names in a tibble dataframe. 
+for(i in seq_along(applicants)) {
+  # Get API data: Modify your own query here 
+  temp <- httr::GET(url, query = list(applicant = applicants[i], 
+                                      # Set your preferred dates here. Keep the forma. 
+                                      applicationDate = "20170101~20181231",
+                                      # Extract patents: TRUE 
+                                      patent = TRUE, 
+                                      # Do not extract utilities: FALSE 
+                                      utility = FALSE, 
+  # The final dataset does not distinguish patents from utilites. 
+  # Hence I prefer to extract them in separate dataframes. 
+                                      # Set the maximun number of patents per applicant. 
+                                      numOfRows = 1000, # default == 20 
+                                      # I() "as is" is required to retain "=" in its original format. 
+                                      ServiceKey = I(mykey)))
+  
+  # Give 0.1 sec interval between each applicant query: KIPRIS limits 50 inputs per sec. 
+  Sys.sleep(0.1) 
+  
+  # Extract xml information 
+  raw_xml <- xml2::read_xml(temp)
+  nodes <- xml2::xml_find_all(raw_xml, xpath = "//item")
+  
+  # Add data into one tibble format, only when there are one or more patents. 
+  if(length(nodes) != 0) {
+    temp_df <- lapply(seq_along(nodes), 
+                      function(x) {
+                        temp_row <- xml_find_all(nodes[x], './*')
+                        tibble(
+                          idx = x,
+                          key = temp_row %>% xml_name(), 
+                          value = temp_row %>% xml_text()
+                        ) %>% return()
+                      }
+    ) %>% bind_rows() %>% 
+      spread(key, value) %>% 
+      select(nodes %>% xml_children() %>% xml_name);
+    # Bind all patent information into one dataframe
+    df_patent <- bind_rows(df_patent, temp_df);
+    # Record the number of patents, if there is one or more patents by the applicant name 
+    no_patents[i] <- length(nodes)
+  } else {
+    # Record NA, if there is no patents by the applicant name 
+    no_patents[i] <- NA
+  }
+}
+```
+
+## Utilities according to your query.  
+```{r}
+# Prepare an empty vector to record the presence of utility
+no_util <- vector(mode = "double") 
+# Prepare an empty tibble dataframe to store final data
+df_util <- tibble() 
+
+for(i in seq_along(applicants)) {
+  # Get API data: Modify your own query here 
+  temp <- httr::GET(url, query = list(applicant = applicants[i], 
+                                      # Set your preferred dates here. Keep the forma. 
+                                      applicationDate = "20170101~20181231",
+                                      # Extract patents: TRUE 
+                                      patent = TRUE, 
+                                      # Do not extract utilities: FALSE 
+                                      utility = FALSE, 
+  # The final dataset does not distinguish patents from utilites. 
+  # Hence I prefer to extract them in separate dataframes. 
+                                      # Set the maximun number of patents per applicant. 
+                                      numOfRows = 1000, # default == 20 
+                                      # I() "as is" is required to retain "=" in its original format. 
+                                      ServiceKey = I(mykey)))
+  
+  # Give 0.1 sec interval between each query: KIPRIS limits 50 inputs per sec. 
+  Sys.sleep(0.1) 
+  
+  # Extract xml information 
+  raw_xml <- xml2::read_xml(temp)
+  nodes <- xml2::xml_find_all(raw_xml, xpath = "//item")
+  
+  # Add data into one tibble format, only when there is more than one patents. 
+  if(length(nodes) != 0) {
+    temp_df <- lapply(seq_along(nodes), 
+                      function(x) {
+                        temp_row <- xml_find_all(nodes[x], './*')
+                        tibble(
+                          idx = x,
+                          key = temp_row %>% xml_name(), 
+                          value = temp_row %>% xml_text()
+                        ) %>% return()
+                      }
+    ) %>% bind_rows() %>% 
+      spread(key, value) %>% 
+      select(nodes %>% xml_children() %>% xml_name);
+    # Bind all patent information into one dataframe
+    df_util <- bind_rows(df_util, temp_df);
+    # Record the number of patents, if there is one or more utilities by the applicant name 
+    no_util[i] <- length(nodes)
+  } else {
+    # Record NA, if there is no patents by the applicant name 
+    no_util[i] <- NA
+  }
+}
+```
+
+If you want to use the KIPRIS OpenApi service for a business, you may apply for a paid account. 
