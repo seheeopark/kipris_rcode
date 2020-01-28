@@ -15,7 +15,7 @@ library(xml2)
 url <- "http://plus.kipris.or.kr/kipo-api/kipi/patUtiModInfoSearchSevice/getAdvancedSearch"
 
 # Personal key to access the REST api 
-mykey <- "1q0r3cpWXcmSCQcSsjizBf2PB7peV8hEMt4242fWW2c="
+mykey <- "your key"
 
 # Load your applicant data. 
 applicants <- readRDS("./sample_data/sample_applicant.rds") 
