@@ -1,5 +1,4 @@
 # kipris
-R codes to extract Korean patent information from the KIPRIS Plus (REST API) 
 
 ## What is KIPRIS? 
 
@@ -27,4 +26,18 @@ Fill-up the provided form, and wait one or two days to get your access key.
 Your personal key can be found in *My Page* under *Subscriptions*. 
 Do **NOT** share your access key with others. 
 
+## Update (Feb/29/2020): Introducing a function that can extract multiple pages per applicant 
+The maximum number of patents per page per applicant is apparently 500 instead of 1,000. 
+This newly updated Rmarkdown file offers my complete function which allows us to extract multi-paged full list of patents for multiple number of patent applicants. 
+If this single function looks too complicated, please refer to the step-by-step r scripts in the `scripts` folder. 
+* 01 Single applicant, single page 
+* 02 Single applicant, multiple pages 
+* 03 Multiple applicants, single page 
+* 04 Multiple applicants, multiple pages (Final version)
+
 Now you are ready to get patent data. 
+
+## Epilogue
+Getting patents by applicant names is now complete. 
+Next, I'll try to update with another query option `ipcNumber`. 
+

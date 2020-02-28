@@ -1,42 +1,15 @@
----
-title: "How to Extract Korean Patents from KIPRIS: By the Applicant Name"
-subtitle: "Multiple applicants, Multiple pages" 
-author: "Sehee Park" 
-date: "`r Sys.date()`" 
-output: github_document
----
-
-```{r setup}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
-```
-
-## Load packages 
-```{r}
-library(tidyverse)
-library(httr) 
-library(xml2) 
-```
-
-## Prepare data
-```{r}
 # URL for KIPRIS Plus REST
 url <- "http://plus.kipris.or.kr/kipo-api/kipi/patUtiModInfoSearchSevice/getAdvancedSearch"
 
 # Personal key to access the REST api 
-mykey <- "use your access key"
+mykey <- "use your key"
 
-# Load your applicant data: make sure it is a vector 
-applicants <- "use your data"
-# Use this sample data if you want to experiment. 
-# applicants <- readRDS("./sample_data/sample_applicant.rds") %>% as_vector() 
-```
+# Sample applicants 
+# applicants <- c("현대케피코", "성우하이텍") 
 
-## Get Patents according to your query
-```{r get-patent-function} 
-# Define a function: 
-# Variables multi applicants (x), multi pages (i)
+# (1) Function: multi applicants (x), multi pages (i)
 
-get_patents <- function(x) {
+get_full_patents <- function(x) {
   # Set variables for each applicant 
   applicant_name <- applicants[x] 
   cumul_df <- tibble() 
@@ -103,12 +76,7 @@ get_patents <- function(x) {
   } 
   return (cumul_df)
 } 
-```
 
-## Get real patent data from own applicants 
-```{r df-patent}
-df_patents <- map_dfr(seq_along(applicants), get_patents)
-```
-
-## Notice 
-If you want to use the KIPRIS OpenApi service for a business, you may apply for a paid account. 
+# (2)  Get real patent data from a vector of applicant names, and multiple pages 
+df_full_patents <- map_dfr(seq_along(applicants), get_full_patents)
+ 
