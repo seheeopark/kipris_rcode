@@ -31,7 +31,13 @@ repeat {
     xml_find_all(xpath = "//item") 
   
   # Bind data into one tibble format, only when there are one or more patents. 
-  if(length(temp_node) != 0) {
+  if (length(temp_node) == 0) {
+    # Unmark if you want to check the loop status 
+    # print(paste0("applicant: ", applicant_name))
+    # print(paste0("page: ", i))
+    # print(paste0("no_patents: ", length(temp_node)))
+    break
+  } else {
     temp_df <- map_dfr(seq_along(temp_node), function(y) {
       temp_row <- xml_find_all(temp_node[y], './*')
       tibble(
