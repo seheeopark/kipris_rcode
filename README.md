@@ -38,6 +38,10 @@ If this single function looks too complicated, please refer to the step-by-step 
 Now you are ready to get patent data. 
 
 ## Update (July/31/2020): Introducing a function that can extract patents by ipc number 
+<<<<<<< HEAD
+
+=======
+>>>>>>> a018bf47f6308820d2785127a58b5dfd128ffddd
 1. A new script to extract patents by ipc numbers is added. 
 * 05 ipcNumber (multiple ipc numbers, multiple pages) 
 
@@ -46,5 +50,10 @@ Now you are ready to get patent data.
 * Failed API access: status code !=200 
 
 ## Epilogue
+<<<<<<< HEAD
 Next, I'll update to extract **English abstract information** by keywords, ipc numbers, etc. 
 
+
+=======
+Next, I'll update to extract **English abstract information** by keywords. 
+>>>>>>> a018bf47f6308820d2785127a58b5dfd128ffddd
