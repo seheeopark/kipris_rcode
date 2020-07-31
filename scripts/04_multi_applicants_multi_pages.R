@@ -90,6 +90,11 @@ get_full_patents <- function(x) {
   if (temp$status_code != 200) {
     print(paste0("Error occurred! Inspect the API status code:", temp$status_code))
   } 
+  if (length(cumul_df) == 0) {
+    temp %>% read_xml() %>% xml_find_all(xpath = "//resultMsg") %>% xml_text() 
+    # No message if there is no error 
+    print(paste0("API access result: ", resultMsg))
+  }
 } 
 
 # (2)  Get real patent data from a vector of applicant names, and multiple pages 
