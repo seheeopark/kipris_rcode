@@ -9,10 +9,8 @@ url <- "http://plus.kipris.or.kr/openapi/rest/KpaGeneralSearchService/anySearch"
 mykey <- "use your own key"
 
 # Sample keywords:
-# You can use a vector of multiple keywords using operatiors: AND(*), OR(+) NOT(!)
+# You can use a vector of multiple keywords using operators: AND(*), OR(+) NOT(!)
 keywords_sample <- c("sodium*ion*battery", "sodium*rechargeable*battery") 
-
-# keywords_2 <- c("sodium", "rechargeable", "battery") 
 
 # (1) Function: multiple ipc numbers, multiple pages 
 
