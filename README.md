@@ -51,9 +51,13 @@ Now you are ready to get patent data.
 
 ## Epilogue
 <<<<<<< HEAD
+<<<<<<< HEAD
 Next, I'll update to extract **English abstract information** by keywords, ipc numbers, etc. 
 
 
+=======
+Next, I'll update to extract **English abstract information** by keywords. 
+>>>>>>> a018bf47f6308820d2785127a58b5dfd128ffddd
 =======
 Next, I'll update to extract **English abstract information** by keywords. 
 >>>>>>> a018bf47f6308820d2785127a58b5dfd128ffddd
