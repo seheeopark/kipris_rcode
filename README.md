@@ -46,4 +46,4 @@ Now you are ready to get patent data.
 * Failed API access: status code !=200 
 
 ## Epilogue
-Next, I'll update to extract **English abstract information** by keywords, ipc numbers, etc. 
+Next, I'll update to extract **English abstract information** by keywords. 
