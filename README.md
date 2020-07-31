@@ -47,14 +47,10 @@ Now you are ready to get patent data.
 * Failed API access: status code !=200 
 
 ## Update (July/31/2020): English abstract by keyword search 
+English abstracts of KIPRIS patents are now available. 
+Keywords can take a vector of multiple keywords with search operators (AND(*), OR(+), NOT(!)).
+
+* 06 Eng abstracts 
 
 ## Epilogue
-Next, I'll update to extract **English abstract information** by keywords, ipc numbers, etc. 
-
-
-=======
-Next, I'll update to extract **English abstract information** by keywords. 
->>>>>>> a018bf47f6308820d2785127a58b5dfd128ffddd
-=======
-Next, I'll update to extract **English abstract information** by keywords. 
->>>>>>> a018bf47f6308820d2785127a58b5dfd128ffddd
+Please create an issue if you wish me to create another r script to search patents in any other ways from the KIPRIS database. 
