@@ -1,3 +1,13 @@
+library(tidyverse)
+library(httr) 
+library(xml2)
+
+# URL for KIPRIS Plus REST
+url <- "http://plus.kipris.or.kr/kipo-api/kipi/patUtiModInfoSearchSevice/getAdvancedSearch"
+
+# Personal key to access the REST api 
+mykey <- "use your key"
+
 #  Single applicant, Multi pages 
 
 # Set variables 
@@ -66,6 +76,11 @@ repeat {
   if (length(temp_node) < 500) {
     break
   }
+  # If status_code !=200, there was an error in the API call. 
+  # If status_code == 200 and df has no observation, there is no patent under the given applicant names. 
+  if (temp$status_code != 200) {
+    print(paste0("Error occurred! Inspect the API status code:", temp$status_code))
+  } 
 }
 # return (cumul_df)
 

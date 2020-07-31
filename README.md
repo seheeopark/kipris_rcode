@@ -37,7 +37,14 @@ If this single function looks too complicated, please refer to the step-by-step 
 
 Now you are ready to get patent data. 
 
+## Update (July/31/2020): Introducing a function that can extract patents by ipc number 
+1. A new script to extract patents by ipc numbers is added. 
+* 05 ipcNumber (multiple ipc numbers, multiple pages) 
+
+2. A warning message is added to all r scripts if your API access was not successful. 
+* Successful API access: status code == 200 
+* Failed API access: status code !=200 
+
 ## Epilogue
-Getting patents by applicant names is now complete. 
-Next, I'll try to update with another query option `ipcNumber`. 
+Next, I'll update to extract **English abstract information** by keywords, ipc numbers, etc. 
 
