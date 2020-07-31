@@ -79,6 +79,9 @@ get_abstracts <- function(x) {
     }
   } 
   return (cumul_df)
+  if (temp$status_code != 200) {
+    print(paste0("Error occurred! Inspect the API status code:", temp$status_code))
+  } 
   if (length(cumul_df) == 0) {
     resultMsg <- temp %>% read_xml() %>% xml_find_all(xpath = "//resultMsg") %>% xml_text() 
     # No message if there is no error 
@@ -86,6 +89,6 @@ get_abstracts <- function(x) {
   }
 } 
 
-# (2)  Get real patent data from a vector of applicant names, and multiple pages 
+# (2)  Get real patent data from keyword search  
 df_abstracts <- map_dfr(seq_along(keywords_sample), get_abstracts)
 
