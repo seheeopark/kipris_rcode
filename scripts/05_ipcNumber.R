@@ -6,23 +6,23 @@ library(xml2)
 url <- "http://plus.kipris.or.kr/kipo-api/kipi/patUtiModInfoSearchSevice/getAdvancedSearch"
 
 # Personal key to access the REST api 
-mykey <- "use your key"
+mykey <- "use your own key"
 
-# Sample applicants 
-# applicants <- c("현대케피코", "성우하이텍") 
+# Sample ipc numbers 
+ipc_sample <- c("G06K 9/00", "B60K 6/36")
 
-# (1) Function: multi applicants (x), multi pages (i)
+# (1) Function: multiple ipc numbers, multiple pages 
 
 get_full_patents <- function(x) {
   # Set variables for each applicant 
-  applicant_name <- applicants[x] 
+  ipc <- ipc_sample[x] 
   cumul_df <- tibble() 
   i <- 1
   # repeated patent extracts if there is more than one page (500 patents) 
   repeat {
-    temp <- httr::GET(url, query = list(applicant = applicant_name, 
+    temp <- httr::GET(url, query = list(ipcNumber = ipc, 
                                         # Set your preferred dates here. Keep the forma. 
-                                        applicationDate = "20130101~20191231",
+                                        applicationDate = "20191001~20191231",
                                         # Extract patents: TRUE 
                                         patent = TRUE, 
                                         # Do not extract utilities: FALSE 
@@ -40,31 +40,31 @@ get_full_patents <- function(x) {
     temp_node <- temp %>% 
       read_xml() %>% 
       xml_find_all(xpath = "//item")  
-    
+
     # Bind data into one tibble format, only when there are one or more patents. 
     if (length(temp_node) == 0) {
       # Unmark if you want to check the loop status 
-      # print(paste0("applicant: ", applicant_name))
-      # print(paste0("page: ", i))
-      # print(paste0("no_patents: ", length(temp_node)))
+      print(paste0("ipcNumber: ", ipc))
+      print(paste0("page: ", i))
+      print(paste0("no_patents: ", length(temp_node)))
       break
     } else {
       temp_df <- map_dfr(seq_along(temp_node), function(y) {
         temp_row <- xml_find_all(temp_node[y], './*')
         tibble(
-          name = applicant_name, 
+          ipcNumber = ipc, 
           page = i, 
           idx = y,
           key = temp_row %>% xml_name(), 
           value = temp_row %>% xml_text()
-          )
-        }
+        )
+      }
       ) %>% spread(key, value) 
       
       # Unmark if you want to check the loop status 
-      # print(paste0("applicant: ", applicant_name))
-      # print(paste0("page: ", i))
-      # print(paste0("no_patents: ", nrow(temp_df)))
+      print(paste0("ipcNumber: ", ipc))
+      print(paste0("page: ", i))
+      print(paste0("no_patents: ", nrow(temp_df)))
       
       # Increase page number 
       i <- i + 1
@@ -84,14 +84,13 @@ get_full_patents <- function(x) {
       break
     }
   } 
-  return (cumul_df) 
-  # If status_code !=200, there was an error in the API call. 
-  # If status_code == 200 and df has no observation, there is no patent under the given applicant names. 
+  return (cumul_df)
   if (temp$status_code != 200) {
     print(paste0("Error occurred! Inspect the API status code:", temp$status_code))
-  } 
+    } 
 } 
 
 # (2)  Get real patent data from a vector of applicant names, and multiple pages 
-df_full_patents <- map_dfr(seq_along(applicants), get_full_patents)
- 
+# use your ipc vector within seq_along() 
+df_full_patents <- map_dfr(seq_along(ipc_sample), get_full_patents)
+

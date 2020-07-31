@@ -108,6 +108,11 @@ get_patents <- function(x) {
     }
   } 
   return (cumul_df)
+  # If status_code !=200, there was an error in the API call. 
+  # If status_code == 200 and df has no observation, there is no patent under the given applicant names. 
+  if (temp$status_code != 200) {
+    print(paste0("Error occurred! Inspect the API status code:", temp$status_code))
+  } 
 } 
 ```
 
