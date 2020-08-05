@@ -59,6 +59,6 @@ get_contents <- function(x) {
 # (2) Get English abstract contents by patent application numbers 
 df_contents <- map_dfr(seq_along(application_no), get_contents)
 
-# (3) Join with the whole patent information by keyword search (result from "06_Eng_abstract.R")
+# (3) Join with the whole patent information by keyword search (result from "06_keyword_search.R")
 df_abstracts_full <- left_join(df_sample, df_contents, by = "applicationNo")
 
