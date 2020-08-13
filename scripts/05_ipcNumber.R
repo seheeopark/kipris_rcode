@@ -3,7 +3,7 @@ library(httr)
 library(xml2)
 
 # URL for KIPRIS Plus REST
-url <- "http://plus.kipris.or.kr/kipo-api/kipi/patUtiModInfoSearchSevice/getAdvancedSearch"
+url_ipcNumber <- "http://plus.kipris.or.kr/kipo-api/kipi/patUtiModInfoSearchSevice/getAdvancedSearch"
 
 # Personal key to access the REST api 
 mykey <- "use your own key"
@@ -20,7 +20,7 @@ get_full_patents <- function(x) {
   i <- 1
   # repeated patent extracts if there is more than one page (500 patents) 
   repeat {
-    temp <- httr::GET(url, query = list(ipcNumber = ipc, 
+    temp <- httr::GET(url_ipcNumber, query = list(ipcNumber = ipc, 
                                         # Set your preferred dates here. Keep the forma. 
                                         applicationDate = "20191001~20191231",
                                         # Extract patents: TRUE 

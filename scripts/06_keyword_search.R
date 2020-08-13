@@ -3,7 +3,7 @@ library(httr)
 library(xml2)
 
 # URL for KIPRIS Plus REST
-url <- "http://plus.kipris.or.kr/openapi/rest/KpaGeneralSearchService/anySearch"
+url_keyword <- "http://plus.kipris.or.kr/openapi/rest/KpaGeneralSearchService/anySearch"
 
 # Personal key to access the REST api 
 mykey <- "use your own key"
@@ -21,13 +21,13 @@ get_abstracts <- function(x) {
   i <- 1
   # repeated patent extracts if there is more than one page (500 patents) 
   repeat {
-    temp <- httr::GET(url, query = list(searchAny = keyword, 
-                                        # multiple pages
-                                        currentPage = i, # default == 1
-                                        # Set the maximum number of patents per page. 
-                                        docsCount = 500, # default == 30 
-                                        # I() "as is" is required to retain its original format. 
-                                        accessKey = I(mykey)))
+    temp <- httr::GET(url_keyword, query = list(searchAny = keyword, 
+                                                # multiple pages
+                                                currentPage = i, # default == 1
+                                                # Set the maximum number of patents per page. 
+                                                docsCount = 500, # default == 30 
+                                                # I() "as is" is required to retain its original format. 
+                                                accessKey = I(mykey)))
     
     # Extract xml information 
     temp_node <- temp %>% 

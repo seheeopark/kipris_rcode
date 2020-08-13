@@ -3,7 +3,7 @@ library(httr)
 library(xml2)
 
 # URL for KIPRIS Plus REST
-url <- "http://plus.kipris.or.kr/openapi/rest/KpaBibliographicService/bibliographicInfo"
+url_abstract <- "http://plus.kipris.or.kr/openapi/rest/KpaBibliographicService/bibliographicInfo"
 
 # Personal key to access the REST api 
 mykey <- "use your own key" 
@@ -17,10 +17,10 @@ application_no <- df_sample$applicationNo # 5 obs.
 get_contents <- function(x) {
   application <- application_no[x]
   
-  temp <- httr::GET(url, query = list(applicationNumber = application, 
-                                      # I() "as is" is required to retain its original format. 
-                                      accessKey = I(mykey)))
-  
+  temp <- httr::GET(url_abstract, query = list(applicationNumber = application, 
+                                               # I() "as is" is required to retain its original format. 
+                                               accessKey = I(mykey)))
+
   # Extract xml information for the abstract content 
   temp_node <- temp %>% 
     read_xml() %>% 
